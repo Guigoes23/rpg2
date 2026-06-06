@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>O Segredo das Montanhas</title>
+
+<style>
+body{
+margin:0;
+background:#050505;
+color:#cda434;
+font-family:Georgia,serif;
+overflow-x:hidden;
+}
+
+#startOverlay{
+position:fixed;inset:0;z-index:9999;
+background:radial-gradient(circle,#111 0%,#000 70%);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+#startOverlay img{
+width:280px;
+animation:pulse 3s infinite ease-in-out, float 5s infinite ease-in-out;
+filter:drop-shadow(0 0 25px rgba(212,175,55,.8));
+}
+
+@keyframes pulse{
+50%{opacity:.65;transform:scale(1.08);}
+}
+
+@keyframes float{
+50%{transform:translateY(-12px);}
+}
+
+.eyes:before,.eyes:after{
+content:"";
+position:fixed;
+top:10%;
+width:28vw;height:18vw;
+background:radial-gradient(circle at center,#d4af37 0,#7a5a11 20%,transparent 40%);
+opacity:.18;
+filter:blur(10px);
+pointer-events:none;
+}
+
+.eyes:before{left:0}
+.eyes:after{right:0}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:40px;
+}
+
+.symbol{
+text-align:center;
+font-size:180px;
+color:#d4af37;
+text-shadow:0 0 30px #d4af37;
+}
+
+h1{
+text-align:center;
+font-weight:normal;
+letter-spacing:3px;
+margin-bottom:40px;
+}
+
+.card{
+border:1px solid rgba(212,175,55,.25);
+padding:18px;
+margin:18px 0;
+background:rgba(0,0,0,.35);
+backdrop-filter:blur(2px);
+}
+
+textarea{
+width:100%;
+min-height:90px;
+background:#080808;
+border:1px solid rgba(212,175,55,.4);
+color:#d4af37;
+padding:10px;
+resize:none;
+}
+
+button{
+display:block;
+margin:30px auto;
+padding:18px 60px;
+font-size:28px;
+background:#111;
+color:#d4af37;
+border:1px solid #8a6a1f;
+cursor:pointer;
+box-shadow:0 0 15px rgba(212,175,55,.2);
+}
+
+#msg{
+text-align:center;
+font-size:22px;
+margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔊 ÁUDIO -->
+<audio id="musica" loop>
+<source src="musica-rpg.mp3">
+</audio>
+
+<audio id="sino">
+<source src="O-Sino.mp3">
+</audio>
+
+<!-- 🌑 OVERLAY -->
+<div id="startOverlay">
+<img src="image-17.png">
+</div>
+
+<div class="eyes"></div>
+
+<div class="container">
+
+<div class="symbol">✧</div>
+
+<h1>O FIM APENAS OCORRE QUANDO A MEMÓRIA É DEIXADA PARA TRÁS.</h1>
+
+<!-- 🔥 FORMSPREE FORM -->
+<form id="form" method="POST">
+
+<div id="questions"></div>
+
+<button type="submit">Enviar</button>
+
+</form>
+
+<div id="msg"></div>
+
+</div>
+
+<script>
+
+const formspreeURL = "https://formspree.io/f/xdaveoan";
+
+/* 🎵 overlay música */
+document.getElementById("startOverlay").onclick = () => {
+document.getElementById("musica").play();
+document.getElementById("startOverlay").style.display = "none";
+};
+
+/* 🔮 perguntas */
+const perguntas = [
+"Qual é a mentira que você conta com mais frequência para si mesmo?",
+"Quem você seria se não precisasse corresponder às expectativas?",
+"Qual decisão mudou sua vida?",
+"Existe alguém que você nunca perdoou?",
+"Se não houvesse consequências, o que faria hoje?",
+"O que você tenta provar?",
+"Quando foi a última vez que foi feliz?",
+"O que você mais teme perder?",
+"O que você pensa quando está sozinho?",
+"Você acha que merece o que tem?",
+"O que nunca sacrificaria?",
+"O que deveria nunca ter existido em você?",
+"Uma pergunta ao universo?"
+];
+
+const container = document.getElementById("questions");
+
+/* cria campos */
+perguntas.forEach((p, i) => {
+container.innerHTML += `
+<div class="card">
+<label>${i+1}. ${p}</label>
+<br><br>
+<textarea name="pergunta${i+1}" required></textarea>
+</div>`;
+});
+
+/* 🔥 envio sem sair da página */
+document.getElementById("form").addEventListener("submit", async (e) => {
+e.preventDefault();
+
+const data = new FormData(e.target);
+
+try {
+await fetch(formspreeURL, {
+method: "POST",
+body: data,
+headers: {
+"Accept": "application/json"
+}
+});
+
+document.getElementById("sino").play();
+
+document.getElementById("msg").innerText =
+"✔ Suas respostas foram enviadas. O Sino foi ouvido.";
+
+e.target.reset();
+
+} catch (err) {
+document.getElementById("msg").innerText =
+"❌ Erro ao enviar. Tente novamente.";
+}
+});
+
+</script>
+
+</body>
+</html>
